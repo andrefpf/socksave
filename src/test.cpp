@@ -37,13 +37,31 @@ void test_file_2() {
     
     path /= "teste.txt";
     
-    boost::filesystem::ofstream file(path);
+    boost::filesystem::ofstream file;
+    
+    file.open(path);
 
     std::string msg = "ESSA É UMA MENSAGEM MEIO GRANDE QUE EU ESTOU COLOCANDO APENAS POR MOTIVOS DE TESTE";
 
     for (int i = 0; i < 10; i++) {
         file.put(msg[i]);
     }
+}
+
+void test_file_3() {
+    boost::filesystem::ofstream file;
+
+    file.open("output/a.txt");
+    file << "a";
+    file.close();
+
+    file.open("output/b.txt");
+    file << "b";
+    file.close();
+
+    file.open("output/c.txt");
+    file << "c";
+    file.close();
 }
 
 void test_timestamp() {
@@ -60,5 +78,5 @@ void test_files_needed() {
 }
 
 int main() {
-    test_files_needed();
+    test_file_3();
 }

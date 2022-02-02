@@ -1,7 +1,7 @@
 FLAGS := -pthread -lboost_filesystem -lboost_system
 
 
-main: build/saver.o
+main: build/datastore.o
 	g++ src/main.cpp -o main.o $(FLAGS) -I include/ $^
 
 build/%.o: src/%.cpp
@@ -13,6 +13,7 @@ test:
 clean:
 	@ rm -rf ./build/*
 	@ rm -rf main.o
+	@ rm -rf test.o
 
 clean_data:
 	@ rm -rf ./output/*

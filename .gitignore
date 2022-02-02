@@ -1,0 +1,5 @@
+./build
+./output
+
+./main.o 
+./test.o

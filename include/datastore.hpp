@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include <boost/filesystem.hpp>
-#include "boost/date_time/posix_time/posix_time.hpp"
-
 
 namespace socksave {
 
@@ -16,7 +14,6 @@ class DataStore {
     
     private:
         void create_file();
-        std::string get_timestamp();
     
     private:
         int _size;

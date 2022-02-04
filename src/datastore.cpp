@@ -7,6 +7,10 @@ socksave::DataStore::DataStore(int max_size, boost::filesystem::path dir, std::s
     _max_size = max_size;
     _prefix = prefix;
     _dir = dir;
+
+    if (!boost::filesystem::is_directory(_dir)) {
+        boost::filesystem::create_directory(_dir);
+    } 
 }
 
 void socksave::DataStore::write(std::string str) {

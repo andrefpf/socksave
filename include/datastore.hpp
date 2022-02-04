@@ -2,7 +2,7 @@
 #define __DATA_STORE_HPP__
 
 #include <iostream>
-#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
 
 
@@ -10,7 +10,6 @@ namespace socksave {
 
 class DataStore {
     public:
-        DataStore(int max_size, boost::filesystem::path dir);
         DataStore(int max_size, boost::filesystem::path dir, std::string prefix);
 
         void write(std::string str);

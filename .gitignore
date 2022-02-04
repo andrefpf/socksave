@@ -1,5 +1,5 @@
-./build
-./output
+build/*
+output/*
 
-./main.o 
-./test.o
+main.o 
+test.o

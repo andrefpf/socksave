@@ -1,7 +1,7 @@
 FLAGS := -pthread -lboost_filesystem -lboost_system
 
 
-main: build/datastore.o
+main: build/datastore.o build/server.o
 	g++ src/main.cpp -o main.o $(FLAGS) -I include/ $^
 
 build/%.o: src/%.cpp

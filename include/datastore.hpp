@@ -1,8 +1,7 @@
-#ifndef __SAVER_HPP__ 
-#define __SAVER_HPP__
+#ifndef __DATA_STORE_HPP__ 
+#define __DATA_STORE_HPP__
 
 #include <iostream>
-// #include <boost/asio.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
 
@@ -29,6 +28,6 @@ class DataStore {
         boost::filesystem::ofstream _current_file;
 };
 
-}
+} // socksave
 
 #endif

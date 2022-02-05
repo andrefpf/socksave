@@ -3,7 +3,6 @@
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 
-
 namespace socksave {
 
 std::string get_timestamp();

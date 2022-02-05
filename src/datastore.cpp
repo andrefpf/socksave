@@ -1,13 +1,12 @@
 #include <datastore.hpp>
 #include <utils.hpp>
 
-
-socksave::DataStore::DataStore(int max_size, boost::filesystem::path dir, std::string prefix="") {
+socksave::DataStore::DataStore(int max_size, boost::filesystem::path path, std::string prefix="") {
     _files_needed = 0;
     _size = max_size;
     _max_size = max_size;
     _prefix = prefix;
-    _dir = dir;
+    _path = path;
 }
 
 void socksave::DataStore::write(std::string str) {
@@ -24,8 +23,8 @@ void socksave::DataStore::write(std::string str) {
 void socksave::DataStore::create_file() {
     std::string filename;
 
-    if (!boost::filesystem::is_directory(_dir)) {
-        boost::filesystem::create_directory(_dir);
+    if (!boost::filesystem::is_directory(_path)) {
+        boost::filesystem::create_directories(_path);
     } 
     
     filename  = _prefix;
@@ -33,7 +32,7 @@ void socksave::DataStore::create_file() {
     filename += "_" + std::to_string(_files_needed);
 
     _current_file.close();
-    _current_file.open(_dir / filename, std::ios_base::app);
+    _current_file.open(_path / filename, std::ios_base::app);
 
     _files_needed++;
     _size = 0;

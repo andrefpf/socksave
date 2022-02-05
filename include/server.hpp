@@ -1,13 +1,13 @@
-#ifndef __SOCK_SERVER_HPP__ 
-#define __SOCK_SERVER_HPP__
+#ifndef __LOG_SERVER_HPP__ 
+#define __LOG_SERVER_HPP__
 
 #include <iostream>
-#include <list>
 #include <boost/asio.hpp>
 #include <boost/bind/bind.hpp>
-
+#include <list>
 #include <datastore.hpp>
 #include <utils.hpp>
+#include <config.hpp>
 
 namespace socksave {
 
@@ -18,15 +18,16 @@ struct Connection {
 
     Connection(boost::asio::io_service & io_service, 
                int max_size, 
-               boost::filesystem::path dir, 
+               boost::filesystem::path path, 
                std::string prefix): 
                
-               socket( io_service ), buffer(), datastore(max_size, dir, prefix) { }
+               socket( io_service ), buffer(), datastore(max_size, path, prefix) { }
 };
 
 class LogServer {
     public:
-        LogServer(int server_port, int file_size, boost::filesystem::path dir, std::string prefix);
+        LogServer(int server_port, int file_size, int timeout, boost::filesystem::path path, std::string prefix);
+        LogServer(Config * config);
         
         void run();
         void start_accepting();
@@ -42,10 +43,11 @@ class LogServer {
         boost::asio::ip::tcp::acceptor _acceptor;
         std::list<Connection> _connections; 
         int _port;
+        int _timeout;
         int _total_connections;
 
         int _file_size;
-        boost::filesystem::path _dir;
+        boost::filesystem::path _path;
         std::string _prefix;
 };
 

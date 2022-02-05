@@ -1,0 +1,7 @@
+{
+    "port" : 4321,
+    "max_size" : 20,
+    "path" : "alternative/",
+    "prefix" : "file",
+    "timeout" : 10
+}

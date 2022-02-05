@@ -2,11 +2,15 @@
 
 #include <datastore.hpp>
 #include <server.hpp>
-
+#include <config.hpp>
 
 int main() {
     using namespace socksave;
 
-    LogServer server(1234, 20, "output", "PREFIX");
+    Config * config = read_config("config.json");
+
+    LogServer server(config);
     server.run();
+
+    delete config;
 }

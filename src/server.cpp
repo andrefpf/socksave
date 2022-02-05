@@ -1,20 +1,28 @@
 #include <server.hpp>
 
-
 socksave::LogServer::LogServer(int server_port, 
                                int file_size, 
-                               boost::filesystem::path dir, 
+                               int timeout,
+                               boost::filesystem::path path, 
                                std::string prefix): 
                                
                                _endpoint(boost::asio::ip::tcp::v4(), server_port),
                                _acceptor(_io_service, _endpoint),
                                _port(server_port),
+                               _timeout(timeout),
                                _file_size(file_size),
-                               _dir(dir),
+                               _path(path),
                                _prefix(prefix)
 {
     _total_connections = 0;
 } 
+
+socksave::LogServer::LogServer(Config * config) : LogServer(config->port, 
+                                                            config->timeout,
+                                                            config->max_size, 
+                                                            config->path, 
+                                                            config->prefix) 
+{}
 
 void socksave::LogServer::run() {
     start_accepting();
@@ -28,7 +36,7 @@ void socksave::LogServer::start_accepting() {
     subdir += "_" + get_timestamp();
     subdir += "_" + std::to_string(_total_connections);
 
-    auto connection = _connections.emplace(_connections.begin(), _io_service, _file_size, _dir/subdir, _prefix);
+    auto connection = _connections.emplace(_connections.begin(), _io_service, _file_size, _path/subdir, _prefix);
     auto handler = boost::bind(&socksave::LogServer::accept_handler, this, connection, boost::asio::placeholders::error);
     _acceptor.async_accept(connection->socket, handler);
 }

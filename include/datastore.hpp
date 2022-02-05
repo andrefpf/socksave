@@ -8,7 +8,7 @@ namespace socksave {
 
 class DataStore {
     public:
-        DataStore(int max_size, boost::filesystem::path dir, std::string prefix);
+        DataStore(int max_size, boost::filesystem::path path, std::string prefix);
 
         void write(std::string str);
     
@@ -20,7 +20,7 @@ class DataStore {
         int _max_size;
         int _files_needed;
         std::string _prefix;
-        boost::filesystem::path _dir;
+        boost::filesystem::path _path;
         boost::filesystem::ofstream _current_file;
 };
 

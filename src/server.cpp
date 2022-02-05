@@ -57,6 +57,7 @@ void socksave::LogServer::accept_handler(std::list<Connection>::iterator connect
         case 0: // not a error
             break;
         case boost::asio::error::operation_aborted:
+            _connections.erase(connection);
             return;
         default:
             std::cerr << "LogServer::accept_handler Error: " << error.message() << std::endl;
@@ -84,6 +85,8 @@ void socksave::LogServer::read_handler(std::list<Connection>::iterator connectio
         case 0: // not a error
             break;
         case boost::asio::error::operation_aborted:
+            connection->datastore.close();    // important to flush remaining data
+            _connections.erase(connection);
             return;
         default:
             std::cerr << "LogServer::read_handler Error: " << error.message() << std::endl;

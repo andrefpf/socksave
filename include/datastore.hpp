@@ -11,6 +11,7 @@ class DataStore {
         DataStore(int max_size, boost::filesystem::path path, std::string prefix);
 
         void write(std::string str);
+        void close();
     
     private:
         void create_file();

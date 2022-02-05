@@ -20,6 +20,11 @@ void socksave::DataStore::write(std::string str) {
     }
 }
 
+void socksave::DataStore::close() {
+    _current_file.flush();
+    _current_file.close();
+}
+
 void socksave::DataStore::create_file() {
     std::string filename;
 

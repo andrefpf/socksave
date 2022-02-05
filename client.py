@@ -1,7 +1,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
 
 HOST = '127.0.0.1'
-PORT = 1235
+PORT = 1234
 
 with socket(AF_INET, SOCK_STREAM) as s:
     s.connect((HOST, PORT))

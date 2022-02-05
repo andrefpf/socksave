@@ -1,8 +1,8 @@
 #include <server.hpp>
 
 socksave::LogServer::LogServer(int server_port, 
-                               int file_size, 
                                int timeout,
+                               int file_size, 
                                boost::filesystem::path path, 
                                std::string prefix): 
                                
@@ -36,7 +36,7 @@ void socksave::LogServer::start_accepting() {
     subdir += "_" + get_timestamp();
     subdir += "_" + std::to_string(_total_connections);
 
-    auto connection = _connections.emplace(_connections.begin(), _io_service, _file_size, _path/subdir, _prefix);
+    auto connection = _connections.emplace(_connections.begin(), _io_service, _timeout, _file_size, _path/subdir, _prefix);
     auto handler = boost::bind(&socksave::LogServer::accept_handler, this, connection, boost::asio::placeholders::error);
     _acceptor.async_accept(connection->socket, handler);
 }
@@ -46,13 +46,23 @@ void socksave::LogServer::start_reading(std::list<Connection>::iterator connecti
     boost::asio::async_read_until(connection->socket, connection->buffer, "\0", handler);
 }
 
+void socksave::LogServer::start_waiting(std::list<Connection>::iterator connection) {
+    auto handler = boost::bind(&socksave::LogServer::wait_handler, this, connection, boost::asio::placeholders::error);
+    connection->timer.expires_from_now(boost::posix_time::seconds(_timeout));
+    connection->timer.async_wait(handler);
+}
 
 void socksave::LogServer::accept_handler(std::list<Connection>::iterator connection, boost::system::error_code const & error) {
-    if (error) {
-        std::cerr << "LogServer Error: " << error.message() << std::endl;
-        _connections.erase(connection);
-        return;
-    } 
+    switch (error.value()) {
+        case 0: // not a error
+            break;
+        case boost::asio::error::operation_aborted:
+            return;
+        default:
+            std::cerr << "LogServer::accept_handler Error: " << error.message() << std::endl;
+            _connections.erase(connection);
+            return;
+    }
 
     _total_connections++;
 
@@ -64,15 +74,21 @@ void socksave::LogServer::accept_handler(std::list<Connection>::iterator connect
     std::cout << "IP: " << ip << "\t PORT: " << port << std::endl; 
     std::cout << std::endl;
 
+    start_waiting(connection);
     start_reading(connection);
     start_accepting();
 } 
 
 void socksave::LogServer::read_handler(std::list<Connection>::iterator connection, boost::system::error_code const & error) {
-    if (error) {
-        std::cerr << "LogServer Error: " << error.message() << std::endl;
-        _connections.erase(connection);
-        return;
+    switch (error.value()) {
+        case 0: // not a error
+            break;
+        case boost::asio::error::operation_aborted:
+            return;
+        default:
+            std::cerr << "LogServer::read_handler Error: " << error.message() << std::endl;
+            _connections.erase(connection);
+            return;
     }
 
     // connection info
@@ -89,6 +105,27 @@ void socksave::LogServer::read_handler(std::list<Connection>::iterator connectio
     std::cout << std::endl;
 
     connection->datastore.write(msg);
-
+    start_waiting(connection);
     start_reading(connection);
 } 
+
+void socksave::LogServer::wait_handler(std::list<Connection>::iterator connection, boost::system::error_code const & error) {
+
+    switch (error.value()) {
+        case 0: // not a error
+            break;
+        case boost::asio::error::operation_aborted:
+            return;
+        default:
+            std::cerr << "LogServer::wait_handler Error: " << error.message() << std::endl;
+            _connections.erase(connection);
+            return;
+    }
+
+    // connection info
+    std::string ip = connection->socket.remote_endpoint().address().to_string();
+    int port = connection->socket.remote_endpoint().port();
+
+    std::cout << "Connection " << ip << "/" << port << " timed out!" << std::endl;
+    connection->socket.close();       
+}
